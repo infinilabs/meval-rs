@@ -7,10 +7,11 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  strategy:
+  main:
+    strategy:
         matrix:
           platform: [ubuntu-latest, windows-latest, macos-latest]
-  main:
+
     name: Main pipeline
     runs-on: ${{ matrix.platform }}
     
