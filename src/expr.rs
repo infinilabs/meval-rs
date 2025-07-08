@@ -1004,9 +1004,11 @@ pub mod de {
     #[cfg(test)]
     mod tests {
         use super::*;
-        use de::as_f64;
+        use crate::de::as_f64;
+        use serde::Deserialize;
         use serde_json;
         use serde_test;
+
         #[test]
         fn test_deserialization() {
             use serde_test::Token;
@@ -1058,7 +1060,6 @@ pub mod de {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use Error;
     use std::str::FromStr;
 
     #[test]
@@ -1067,7 +1068,7 @@ mod tests {
         assert_eq!(eval_str("2 + (3 + 4)"), Ok(9.));
         assert_eq!(eval_str("-2^(4 - 3) * (3 + 4)"), Ok(-14.));
         assert_eq!(eval_str("-2*3! + 1"), Ok(-11.));
-        assert_eq!(eval_str("-171!"), Ok(std::f64::NEG_INFINITY));
+        assert_eq!(eval_str("-171!"), Ok(f64::NEG_INFINITY));
         assert_eq!(eval_str("150!/148!"), Ok(22350.));
         assert_eq!(eval_str("a + 3"), Err(Error::UnknownVariable("a".into())));
         assert_eq!(eval_str("round(sin (pi) * cos(0))"), Ok(0.));

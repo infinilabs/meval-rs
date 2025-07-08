@@ -399,10 +399,7 @@ mod tests {
         for &s in ["abc(", "u0(", "_034 (", "A_be45EA  ("].iter() {
             assert_eq!(
                 func(s.as_bytes()),
-                Ok((
-                    &b""[..],
-                    Token::Func((&s[0..s.len() - 1]).trim().into(), None)
-                ))
+                Ok((&b""[..], Token::Func(s[0..s.len() - 1].trim().into(), None)))
             );
         }
 
