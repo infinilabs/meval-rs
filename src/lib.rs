@@ -120,6 +120,7 @@
 #![cfg_attr(not(feature = "serde"), doc = " ```rust,ignore")]
 //! #[macro_use]
 //! use meval::{Expr, Context};
+//! use serde::Deserialize;
 //!
 //! #[derive(Deserialize)]
 //! struct Ode {

@@ -11,6 +11,7 @@ use serde::de::Error;
 /// ```rust
 /// #[macro_use]
 /// use meval::{Expr, Context};
+/// use serde::Deserialize;
 ///
 /// #[derive(Deserialize)]
 /// struct Foo {
