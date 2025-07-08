@@ -844,7 +844,7 @@ impl<'a> Context<'a> {
     }
 }
 
-impl<'a> Default for Context<'a> {
+impl Default for Context<'_> {
     fn default() -> Self {
         Context::new()
     }
@@ -926,7 +926,7 @@ impl ArgGuard for std::ops::RangeFull {
     }
 }
 
-impl<'a> ContextProvider for Context<'a> {
+impl ContextProvider for Context<'_> {
     fn get_var(&self, name: &str) -> Option<f64> {
         self.vars.get(name).cloned()
     }
@@ -952,7 +952,7 @@ pub mod de {
         {
             struct ExprVisitor;
 
-            impl<'de> serde::de::Visitor<'de> for ExprVisitor {
+            impl serde::de::Visitor<'_> for ExprVisitor {
                 type Value = Expr;
 
                 fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
