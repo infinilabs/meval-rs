@@ -127,9 +127,6 @@ configuration easy to set up, if the feature `serde` is enabled
 
 ```rust
 #[macro_use]
-extern crate serde_derive;
-extern crate toml;
-extern crate meval;
 use meval::{Expr, Context};
 
 #[derive(Deserialize)]

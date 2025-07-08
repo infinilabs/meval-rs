@@ -1,6 +1,3 @@
-extern crate gnuplot;
-extern crate meval;
-
 use gnuplot::{Caption, Figure};
 use meval::Expr;
 use std::env::args;

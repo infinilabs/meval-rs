@@ -943,10 +943,10 @@ impl<'a> ContextProvider for Context<'a> {
 #[cfg(feature = "serde")]
 pub mod de {
     use super::Expr;
+    use crate::tokenizer::Token;
     use serde;
     use std::fmt;
     use std::str::FromStr;
-    use tokenizer::Token;
 
     impl<'de> serde::Deserialize<'de> for Expr {
         fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>

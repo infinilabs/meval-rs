@@ -1,5 +1,3 @@
-extern crate meval;
-
 use meval::eval_str;
 use std::env::args;
 
