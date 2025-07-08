@@ -29,7 +29,7 @@ mod tests {
         assert_eq!(factorial(2.), Ok(2.));
         assert_eq!(factorial(3.), Ok(6.));
         assert_eq!(factorial(170.), Ok(7.257415615307994e306));
-        assert_eq!(factorial(171.), Ok(std::f64::INFINITY));
+        assert_eq!(factorial(171.), Ok(f64::INFINITY));
 
         match factorial(1.1) {
             Err(_) => {}

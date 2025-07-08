@@ -33,11 +33,10 @@ pub enum ParseError {
 impl fmt::Display for ParseError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            ParseError::UnexpectedToken(i) => write!(f, "Unexpected token at byte {}.", i),
+            ParseError::UnexpectedToken(i) => write!(f, "Unexpected token at byte {i}."),
             ParseError::MissingRParen(i) => write!(
                 f,
-                "Missing {} right parenthes{}.",
-                i,
+                "Missing {i} right parenthes{}.",
                 if i == 1 { "is" } else { "es" }
             ),
             ParseError::MissingArgument => write!(f, "Missing argument at the end of expression."),
@@ -399,10 +398,7 @@ mod tests {
         for &s in ["abc(", "u0(", "_034 (", "A_be45EA  ("].iter() {
             assert_eq!(
                 func(s.as_bytes()),
-                Ok((
-                    &b""[..],
-                    Token::Func((&s[0..s.len() - 1]).trim().into(), None)
-                ))
+                Ok((&b""[..], Token::Func(s[0..s.len() - 1].trim().into(), None)))
             );
         }
 

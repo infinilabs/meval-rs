@@ -11,6 +11,7 @@ use serde::de::Error;
 /// ```rust
 /// #[macro_use]
 /// use meval::{Expr, Context};
+/// use serde::Deserialize;
 ///
 /// #[derive(Deserialize)]
 /// struct Foo {
@@ -18,13 +19,11 @@ use serde::de::Error;
 ///     x: f64,
 /// }
 ///
-/// fn main() {
-///     let foo: Foo = toml::from_str(r#" x = "cos(1.)" "#).unwrap();
-///     assert_eq!(foo.x, 1f64.cos());
+/// let foo: Foo = toml::from_str(r#" x = "cos(1.)" "#).unwrap();
+/// assert_eq!(foo.x, 1f64.cos());
 ///
-///     let foo: Result<Foo, _> = toml::from_str(r#" x = "cos(x)" "#);
-///     assert!(foo.is_err());
-/// }
+/// let foo: Result<Foo, _> = toml::from_str(r#" x = "cos(x)" "#);
+/// assert!(foo.is_err());
 /// ```
 ///
 /// See [crate root](../index.html#deserialization) for another example.

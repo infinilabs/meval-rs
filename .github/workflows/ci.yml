@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  main:
+    strategy:
+        matrix:
+          platform: [ubuntu-latest, windows-latest, macos-latest]
+
+    name: Main pipeline
+    runs-on: ${{ matrix.platform }}
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install Rust stable
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        components: rustfmt
+
+    - name: Check formatting
+      run: cargo fmt --all -- --check
+    
+    - name: Build 
+      run: cargo build --all-targets --verbose
+
+    - name: Build with serde feature
+      run: cargo build --all-targets --features serde --verbose
+    
+    - name: Run tests (default features)
+      run: cargo test --verbose
+    
+    - name: Test with serde feature
+      run: cargo test --features serde --verbose
+
+    - name: Run clippy
+      run: cargo clippy --all-targets -- -D warnings
+    
+    - name: Run clippy (serde feature)
+      run: cargo clippy --all-targets --features serde -- -D warnings
