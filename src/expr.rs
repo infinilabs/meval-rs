@@ -6,12 +6,11 @@ use std::str::FromStr;
 
 type ContextHashMap<K, V> = FnvHashMap<K, V>;
 
-use extra_math::factorial;
-use shunting_yard::to_rpn;
-use std;
+use crate::Error;
+use crate::extra_math::factorial;
+use crate::shunting_yard::to_rpn;
+use crate::tokenizer::{Token, tokenize};
 use std::fmt;
-use tokenizer::{tokenize, Token};
-use Error;
 
 /// Representation of a parsed expression.
 ///
@@ -41,8 +40,8 @@ impl Expr {
 
     /// Evaluates the expression with variables given by the argument.
     pub fn eval_with_context<C: ContextProvider>(&self, ctx: C) -> Result<f64, Error> {
-        use tokenizer::Operation::*;
-        use tokenizer::Token::*;
+        use crate::tokenizer::Operation::*;
+        use crate::tokenizer::Token::*;
 
         let mut stack = Vec::with_capacity(16);
 
@@ -156,7 +155,7 @@ impl Expr {
     where
         C: ContextProvider + 'a,
     {
-        try!(self.check_context(((var, 0.), &ctx)));
+        self.check_context(((var, 0.), &ctx))?;
         let var = var.to_owned();
         Ok(move |x| {
             self.eval_with_context(((&var, x), &ctx))
@@ -194,7 +193,7 @@ impl Expr {
     where
         C: ContextProvider + 'a,
     {
-        try!(self.check_context(([(var1, 0.), (var2, 0.)], &ctx)));
+        self.check_context(([(var1, 0.), (var2, 0.)], &ctx))?;
         let var1 = var1.to_owned();
         let var2 = var2.to_owned();
         Ok(move |x, y| {
@@ -239,7 +238,7 @@ impl Expr {
     where
         C: ContextProvider + 'a,
     {
-        try!(self.check_context(([(var1, 0.), (var2, 0.), (var3, 0.)], &ctx)));
+        self.check_context(([(var1, 0.), (var2, 0.), (var3, 0.)], &ctx))?;
         let var1 = var1.to_owned();
         let var2 = var2.to_owned();
         let var3 = var3.to_owned();
@@ -287,7 +286,7 @@ impl Expr {
     where
         C: ContextProvider + 'a,
     {
-        try!(self.check_context(([(var1, 0.), (var2, 0.), (var3, 0.), (var4, 0.)], &ctx)));
+        self.check_context(([(var1, 0.), (var2, 0.), (var3, 0.), (var4, 0.)], &ctx))?;
         let var1 = var1.to_owned();
         let var2 = var2.to_owned();
         let var3 = var3.to_owned();
@@ -338,10 +337,10 @@ impl Expr {
     where
         C: ContextProvider + 'a,
     {
-        try!(self.check_context((
+        self.check_context((
             [(var1, 0.), (var2, 0.), (var3, 0.), (var4, 0.), (var5, 0.)],
-            &ctx
-        )));
+            &ctx,
+        ))?;
         let var1 = var1.to_owned();
         let var2 = var2.to_owned();
         let var3 = var3.to_owned();
@@ -389,17 +388,15 @@ impl Expr {
         C: ContextProvider + 'a,
     {
         let n = vars.len();
-        try!(self.check_context((
-            vars.into_iter()
-                .zip(vec![0.; n].into_iter())
-                .collect::<Vec<_>>(),
-            &ctx
-        )));
+        self.check_context((
+            vars.iter().zip(vec![0.; n].into_iter()).collect::<Vec<_>>(),
+            &ctx,
+        ))?;
         let vars = vars.iter().map(|v| v.to_owned()).collect::<Vec<_>>();
         Ok(move |x: &[f64]| {
             self.eval_with_context((
                 vars.iter()
-                    .zip(x.into_iter())
+                    .zip(x.iter())
                     .map(|(v, x)| (v, *x))
                     .collect::<Vec<_>>(),
                 &ctx,
@@ -447,7 +444,7 @@ impl Expr {
 
 /// Evaluates a string with built-in constants and functions.
 pub fn eval_str<S: AsRef<str>>(expr: S) -> Result<f64, Error> {
-    let expr = try!(Expr::from_str(expr.as_ref()));
+    let expr = Expr::from_str(expr.as_ref())?;
 
     expr.eval_with_context(builtin())
 }
@@ -456,11 +453,11 @@ impl FromStr for Expr {
     type Err = Error;
     /// Constructs an expression by parsing a string.
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let tokens = try!(tokenize(s));
+        let tokens = tokenize(s)?;
 
-        let rpn = try!(to_rpn(&tokens));
+        let rpn = to_rpn(&tokens)?;
 
-        Ok(Expr { rpn: rpn })
+        Ok(Expr { rpn })
     }
 }
 
@@ -471,7 +468,7 @@ pub fn eval_str_with_context<S: AsRef<str>, C: ContextProvider>(
     expr: S,
     ctx: C,
 ) -> Result<f64, Error> {
-    let expr = try!(Expr::from_str(expr.as_ref()));
+    let expr = Expr::from_str(expr.as_ref())?;
 
     expr.eval_with_context(ctx)
 }
@@ -582,12 +579,12 @@ impl std::error::Error for FuncEvalError {
 
 #[doc(hidden)]
 pub fn max_array(xs: &[f64]) -> f64 {
-    xs.iter().fold(::std::f64::NEG_INFINITY, |m, &x| m.max(x))
+    xs.iter().fold(f64::NEG_INFINITY, |m, &x| m.max(x))
 }
 
 #[doc(hidden)]
 pub fn min_array(xs: &[f64]) -> f64 {
-    xs.iter().fold(::std::f64::INFINITY, |m, &x| m.min(x))
+    xs.iter().fold(f64::INFINITY, |m, &x| m.min(x))
 }
 
 /// Returns the built-in constants and functions in a form that can be used as a `ContextProvider`.
@@ -597,23 +594,23 @@ pub fn builtin<'a>() -> Context<'a> {
     Context::new()
 }
 
-impl<'a, T: ContextProvider> ContextProvider for &'a T {
+impl<T: ContextProvider> ContextProvider for &'_ T {
     fn get_var(&self, name: &str) -> Option<f64> {
-        (&**self).get_var(name)
+        (**self).get_var(name)
     }
 
     fn eval_func(&self, name: &str, args: &[f64]) -> Result<f64, FuncEvalError> {
-        (&**self).eval_func(name, args)
+        (**self).eval_func(name, args)
     }
 }
 
-impl<'a, T: ContextProvider> ContextProvider for &'a mut T {
+impl<T: ContextProvider> ContextProvider for &'_ mut T {
     fn get_var(&self, name: &str) -> Option<f64> {
-        (&**self).get_var(name)
+        (**self).get_var(name)
     }
 
     fn eval_func(&self, name: &str, args: &[f64]) -> Result<f64, FuncEvalError> {
-        (&**self).eval_func(name, args)
+        (**self).eval_func(name, args)
     }
 }
 
@@ -856,7 +853,7 @@ impl<'a> Default for Context<'a> {
     }
 }
 
-type GuardedFunc<'a> = Rc<Fn(&[f64]) -> Result<f64, FuncEvalError> + 'a>;
+type GuardedFunc<'a> = Rc<dyn Fn(&[f64]) -> Result<f64, FuncEvalError> + 'a>;
 
 /// Trait for types that can specify the number of required arguments for a function with a
 /// variable number of arguments.
@@ -1061,8 +1058,8 @@ pub mod de {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::str::FromStr;
     use Error;
+    use std::str::FromStr;
 
     #[test]
     fn test_eval() {

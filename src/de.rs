@@ -1,8 +1,8 @@
 //! Deserialization utilities.
 use super::Expr;
+use serde::Deserialize;
 use serde::de;
 use serde::de::Error;
-use serde::Deserialize;
 
 /// Deserialize into [`Expr`](../struct.Expr.html) and then evaluate using `Expr::eval`.
 ///

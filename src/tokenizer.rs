@@ -5,7 +5,7 @@
 //! The parser should tokenize only well-formed expressions.
 //!
 //! [nom]: https://crates.io/crates/nom
-use nom::{multispace, slice_to_offsets, IResult, Needed};
+use nom::{IResult, Needed, multispace, slice_to_offsets};
 use std;
 use std::fmt;
 use std::str::from_utf8;
@@ -119,16 +119,13 @@ fn ident(input: &[u8]) -> IResult<&[u8], &[u8]> {
     use nom::IResult::*;
     use nom::{ErrorKind, Needed};
 
-    // first character must be 'a'...'z' | 'A'...'Z' | '_'
+    // first character must be 'a'..='z' | 'A'..='Z' | '_'
     match input.first().cloned() {
-        Some(b'a'...b'z') | Some(b'A'...b'Z') | Some(b'_') => {
+        Some(b'a'..=b'z') | Some(b'A'..=b'Z') | Some(b'_') => {
             let n = input
                 .iter()
                 .skip(1)
-                .take_while(|&&c| match c {
-                    b'a'...b'z' | b'A'...b'Z' | b'_' | b'0'...b'9' => true,
-                    _ => false,
-                })
+                .take_while(|&&c| matches!(c, b'a'..=b'z' | b'A'..=b'Z' | b'_' | b'0'..=b'9'))
                 .count();
             let (parsed, rest) = input.split_at(n + 1);
             Done(rest, parsed)
@@ -145,7 +142,7 @@ named!(
     ))
 );
 
-/// Parse `func(`, returns `func`.
+// Parse `func(`, returns `func`.
 named!(
     func<Token>,
     map!(
@@ -168,7 +165,7 @@ named!(
 fn digit_complete(input: &[u8]) -> IResult<&[u8], &[u8]> {
     use nom::Err::*;
     use nom::IResult::*;
-    use nom::{is_digit, ErrorKind};
+    use nom::{ErrorKind, is_digit};
 
     let n = input.iter().take_while(|&&c| is_digit(c)).count();
     if n > 0 {
