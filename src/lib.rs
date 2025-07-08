@@ -16,19 +16,9 @@
 //! meval = "0.2"
 //! ```
 //!
-//! and add this to your crate root:
-//!
-//! ```rust
-//! extern crate meval;
-//! ```
-//!
-//!  **Requires Rust 1.26.**
-//!
 //! # Simple examples
 //!
 //! ```rust
-//! extern crate meval;
-//!
 //! fn main() {
 //!     let r = meval::eval_str("1 + 2").unwrap();
 //!
@@ -40,8 +30,6 @@
 //! for this and more:
 //!
 //! ```rust
-//! extern crate meval;
-//!
 //! fn main() {
 //!     let expr: meval::Expr = "sin(pi * x)".parse().unwrap();
 //!     let func = expr.bind("x").unwrap();
@@ -131,9 +119,6 @@
 #![cfg_attr(feature = "serde", doc = " ```rust")]
 #![cfg_attr(not(feature = "serde"), doc = " ```rust,ignore")]
 //! #[macro_use]
-//! extern crate serde_derive;
-//! extern crate toml;
-//! extern crate meval;
 //! use meval::{Expr, Context};
 //!
 //! #[derive(Deserialize)]
@@ -182,19 +167,6 @@
 //! [serde]: https://crates.io/crates/serde
 //! [dyon]: https://crates.io/crates/dyon
 //! [gluon]: https://crates.io/crates/gluon
-
-#[macro_use]
-extern crate nom;
-extern crate fnv;
-#[cfg(feature = "serde")]
-extern crate serde;
-#[cfg_attr(all(test, feature = "serde"), macro_use)]
-#[cfg(all(test, feature = "serde"))]
-extern crate serde_derive;
-#[cfg(test)]
-extern crate serde_json;
-#[cfg(test)]
-extern crate serde_test;
 
 use std::fmt;
 
