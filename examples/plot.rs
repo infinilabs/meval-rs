@@ -11,7 +11,7 @@ Example: plot 'sin(pi * x)'";
 fn main() {
     let args = args().skip(1);
     if args.len() == 0 {
-        println!("{}", USAGE);
+        println!("{USAGE}");
     }
 
     let mut fg = Figure::new();
@@ -27,13 +27,13 @@ fn main() {
             // parse expression
             let expr = match arg.parse::<Expr>() {
                 Ok(expr) => expr,
-                Err(e) => return println!("Error when evaluating `{}`: {}", arg, e),
+                Err(e) => return println!("Error when evaluating `{arg}`: {e}"),
             };
             // create a function of one variable
             let func = match expr.bind("x") {
                 Ok(func) => func,
                 Err(e) => {
-                    return println!("Error when trying to bind variable `x` in {}: {}", arg, e);
+                    return println!("Error when trying to bind variable `x` in {arg}: {e}");
                 }
             };
 

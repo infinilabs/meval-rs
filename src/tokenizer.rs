@@ -33,11 +33,10 @@ pub enum ParseError {
 impl fmt::Display for ParseError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            ParseError::UnexpectedToken(i) => write!(f, "Unexpected token at byte {}.", i),
+            ParseError::UnexpectedToken(i) => write!(f, "Unexpected token at byte {i}."),
             ParseError::MissingRParen(i) => write!(
                 f,
-                "Missing {} right parenthes{}.",
-                i,
+                "Missing {i} right parenthes{}.",
                 if i == 1 { "is" } else { "es" }
             ),
             ParseError::MissingArgument => write!(f, "Missing argument at the end of expression."),

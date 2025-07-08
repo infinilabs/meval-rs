@@ -67,8 +67,7 @@ impl Expr {
                         Pow => left.powf(right),
                         _ => {
                             return Err(Error::EvalError(format!(
-                                "Unimplemented binary operation: {:?}",
-                                op
+                                "Unimplemented binary operation: {op:?}",
                             )));
                         }
                     };
@@ -88,8 +87,7 @@ impl Expr {
                         }
                         _ => {
                             return Err(Error::EvalError(format!(
-                                "Unimplemented unary operation: {:?}",
-                                op
+                                "Unimplemented unary operation: {op:?}",
                             )));
                         }
                     };
@@ -99,8 +97,7 @@ impl Expr {
                     if stack.len() < i {
                         return Err(Error::EvalError(format!(
                             "eval: stack does not have enough arguments for function token \
-                             {:?}",
-                            token
+                             {token:?}",
                         )));
                     }
                     match ctx.eval_func(n, &stack[stack.len() - i..]) {
@@ -112,7 +109,7 @@ impl Expr {
                         Err(e) => return Err(Error::Function(n.to_owned(), e)),
                     }
                 }
-                _ => return Err(Error::EvalError(format!("Unrecognized token: {:?}", token))),
+                _ => return Err(Error::EvalError(format!("Unrecognized token: {token:?}"))),
             }
         }
 
@@ -559,7 +556,7 @@ impl fmt::Display for FuncEvalError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             FuncEvalError::UnknownFunction => write!(f, "Unknown function"),
-            FuncEvalError::NumberArgs(i) => write!(f, "Expected {} arguments", i),
+            FuncEvalError::NumberArgs(i) => write!(f, "Expected {i} arguments"),
             FuncEvalError::TooFewArguments => write!(f, "Too few arguments"),
             FuncEvalError::TooManyArguments => write!(f, "Too many arguments"),
         }

@@ -200,10 +200,10 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             Error::UnknownVariable(ref name) => {
-                write!(f, "Evaluation error: unknown variable `{}`.", name)
+                write!(f, "Evaluation error: unknown variable `{name}`.")
             }
             Error::Function(ref name, ref e) => {
-                write!(f, "Evaluation error: function `{}`: {}", name, e)
+                write!(f, "Evaluation error: function `{name}`: {e}")
             }
             Error::ParseError(ref e) => {
                 write!(f, "Parse error: ")?;
